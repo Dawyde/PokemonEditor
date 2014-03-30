@@ -14,6 +14,7 @@ function MapUI(editor, canvas_id){
 	this.current_layout = 1;
 	
 	this.hidden_layout = {1:true, 2:true, 3:true};
+	
 }
 
 MapUI.prototype = {
@@ -35,12 +36,14 @@ MapUI.prototype = {
 	toogleHiddenLayout: function(id){
 		this.hidden_layout[id] = !this.hidden_layout[id];
 		this.draw();
+		this.dispatcher.dispatchEvent('hiddenlayoutchange', {id:id, active:this.hidden_layout[id]} );
 		return this.hidden_layout[id];
 	},
 	setCurrentCalque:function(id){
 		if(this.current_layout == id) return false;
 		this.current_layout = id;
 		this.draw();
+		this.dispatcher.dispatchEvent('layoutchange', {id:id} );
 		return true;
 	},
 	draw: function(){
@@ -93,14 +96,40 @@ MapUI.prototype = {
 		var pos = tileset.getPosition(cell);
 		ctx.drawImage(tileset.getImage(), pos.x, pos.y, T_WIDTH, T_HEIGHT, x, y, T_WIDTH, T_HEIGHT);
 	},
+	addEventListener: function(callbackObj, event_name, callback){
+		this.dispatcher.addEventListener(callbackObj, event_name, callback);
+	},
 	mousedown: function(e){
-		if(e.datas.b == 1) return;
-		this.isdown = e.datas.b==0?1:2;
-		var x = Math.floor(e.datas.x/T_WIDTH);
-		var y = Math.floor(e.datas.y/T_HEIGHT);
-		this.position = {x: x, y:y};
-		if(this.isdown == 2 && this.editor.getTilesetManager().clearCell(this.editor.getMap(), x, y, this.current_layout)) this.draw();
-		else if(this.isdown == 1 && this.editor.getTilesetManager().applySelection(this.editor.getMap(), x, y, this.current_layout)) this.draw();
+		if(this.editor.getTool() == 1){//Crayon
+			if(e.datas.b == 1) return;
+			this.isdown = e.datas.b==0?1:2;
+			var x = Math.floor(e.datas.x/T_WIDTH);
+			var y = Math.floor(e.datas.y/T_HEIGHT);
+			this.position = {x: x, y:y};
+			if(this.isdown == 2 && this.editor.getTilesetManager().clearCell(this.editor.getMap(), x, y, this.current_layout)) this.draw();
+			else if(this.isdown == 1 && this.editor.getTilesetManager().applySelection(this.editor.getMap(), x, y, this.current_layout)) this.draw();
+		}
+		else if(this.editor.getTool() == 2){//Pipette
+			var value;
+			var x = Math.floor(e.datas.x/T_WIDTH);
+			var y = Math.floor(e.datas.y/T_HEIGHT);
+			if(this.current_layout == 1) value = this.editor.getMap().getCell(x, y).getC1();
+			else if(this.current_layout == 2) value = this.editor.getMap().getCell(x, y).getC2();
+			else if(this.current_layout == 3) value = this.editor.getMap().getCell(x, y).getC3();
+			else return;
+			if(value){
+				//On enregistre la sélection
+				this.editor.getTilesetManager().setSelectionById(value.id);
+				//Puis on retourne à la pipette
+				this.editor.setTool(1);
+			}
+		}
+		else if(this.editor.getTool() == 3){//Peinture
+			var value;
+			var x = Math.floor(e.datas.x/T_WIDTH);
+			var y = Math.floor(e.datas.y/T_HEIGHT);
+			if(this.editor.getTilesetManager().applyPainting(this.editor.getMap(), x, y, this.current_layout)) this.draw();
+		}
 	},
 	mouseup: function(e){
 		if(!this.isdown) return;
@@ -125,6 +154,7 @@ function TilesetUI(editor, canvas_id, tileset_manager){
 	this.ctx = this.element.getContext('2d');
 	this.manager = tileset_manager;
 	this.manager.addEventListener(this, 'tilesetchange', this.tilesetChange);
+	this.manager.addEventListener(this, 'selectionchange', this.selectionChange);
 	this.dispatcher = new EventDispatcher(this);
 	this.dispatcher.addEventListener(this, 'mousedown', this.mousedown);
 	this.dispatcher.addEventListener(this, 'mousemove', this.mousemove);
@@ -147,6 +177,9 @@ TilesetUI.prototype={
 		var img = t.getImage();
 		this.element.width=img.width;
 		this.element.height = img.height;
+	},
+	selectionChange:function(){
+		this.draw();
 	},
 	draw:function(){
 		var t = this.manager.getCurrentTileset();

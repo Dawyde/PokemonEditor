@@ -33,18 +33,42 @@
 			height:600px;
 			overflow:auto;
 		}
+		.icon-pipette{
+			background-image: url('bootstrap/img/pipette.png');
+			background-position: 0px;
+			width:19px;
+			height:19px;
+		}
+		.icon-pencil{
+			background-image: url('bootstrap/img/pencil.png');
+			background-position: 0px;
+			width:19px;
+			height:19px;
+		}
+		.icon-peinture{
+			background-image: url('bootstrap/img/peinture.png');
+			background-position: 0px;
+			width:19px;
+			height:19px;
+		}
 	</style>
 </head>
 <body>
 	<div id="box_toolbar" class="btn-toolbar">
 	  <div class="btn-group">
-		<span class="btn btn-medium" title="Nouveau" onClick="new_map();"><i class="icon-pencil"></i></span>
+		<span class="btn btn-medium" title="Nouveau" onClick="new_map();">New</span>
 	  </div>
 	  <!-- Calques -->
 	  <div class="btn-group" id="active_calque">
-		<button class="btn" id="c1" title="Calque 1" onClick="setCalque(1);">C1</button>
+		<button class="btn active" id="c1" title="Calque 1" onClick="setCalque(1);">C1</button>
 		<button class="btn" id="c2" title="Calque 2" onClick="setCalque(2);">C2</button>
 		<button class="btn" id="c3" title="Calque 3" onClick="setCalque(3);">C3</button>
+	  </div>
+	  <!-- Outils -->
+	  <div class="btn-group" id="tools">
+		<button class="btn active" id="tool_1" title="Outil Crayon" onClick="setTool(1);"><i class="icon icon-pencil"></i></button>
+		<button class="btn" id="tool_2" title="Outil Pipette" onClick="setTool(2);"><i class="icon icon-pipette"> </i></button>
+		<button class="btn" id="tool_3" title="Outil Peinture" onClick="setTool(3);"><i class="icon icon-peinture"> </i></button>
 	  </div>
 	  
 	  <!-- Options -->

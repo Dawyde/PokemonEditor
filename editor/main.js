@@ -17,14 +17,31 @@ window.onload = function(){
 	new_map();*/
 	editor = new EditorManager(['tileset/tile1.png']);
 	$(document).mouseup(function(e){ editor.mouseUp(e); });
-	setCalque(1);
+	editor.getMapUI().addEventListener(false, 'layoutchange', layoutChange);
+	editor.getMapUI().addEventListener(false, 'hiddenlayoutchange', hiddenLayoutChange);
+	editor.addEventListener(false, 'toolchange', toolChange);
 }
+
 function toogleHiddenLayout(id){
-	if(editor.getMapUI().toogleHiddenLayout(id)) $("#layout_h"+id).addClass("active");
-	else $("#layout_h"+id).removeClass("active");
+	editor.getMapUI().toogleHiddenLayout(id)
 }
 function setCalque(id){
-	$("#active_calque button").removeClass('active');
 	editor.getMapUI().setCurrentCalque(id);
-	$("#active_calque #c"+id).addClass('active');
+}
+function setTool(id){
+	editor.setTool(id);
+}
+
+//Gestion event
+function layoutChange(e){
+	$("#active_calque button").removeClass('active');
+	$("#active_calque #c"+e.datas.id).addClass('active');
+}
+function hiddenLayoutChange(e){
+	if(e.datas.active) $("#layout_h"+e.datas.id).addClass("active");
+	else $("#layout_h"+e.datas.id).removeClass("active");
+}
+function toolChange(e){
+	$("#tools button").removeClass('active');
+	$("#tools #tool_"+e.datas.id).addClass('active');
 }

@@ -14,6 +14,7 @@ function EditorManager(sets){
 	this.map_ui = new MapUI(this, 'map');
 	this.tileset_ui = new TilesetUI(this, 'tiles', this.tilesets);
 	
+	this.current_tool = 1;
 	
 }
 
@@ -21,6 +22,15 @@ EditorManager.prototype={
 	editorReady:function(){
 		this.tileset_ui.init();
 		this.map_ui.init();
+	},
+	setTool: function(id){
+		if(this.current_tool == id) return false;
+		this.current_tool = id;
+		this.dispatcher.dispatchEvent('toolchange', {id:id} );
+		return true;
+	},
+	getTool: function(){
+		return this.current_tool;
 	},
 	addEventListener: function(callbackObj, event_name, callback){
 		this.dispatcher.addEventListener(callbackObj, event_name, callback);

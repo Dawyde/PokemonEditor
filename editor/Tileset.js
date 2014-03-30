@@ -56,6 +56,11 @@ TilesetManager.prototype={
 			this.selected.y2 = y1;
 		}
 	},
+	setSelectionById: function(id){
+		var value = this.tilesets[this.current_tile].getTilePosition(id);
+		this.setSelection(value.x, value.y, value.x, value.y);
+		this.dispatcher.dispatchEvent('selectionchange');
+	},
 	clearCell: function(map, s_x, s_y, calque){
 		var cell = map.getCell(s_x,s_y);
 		if(!cell) return;
@@ -99,6 +104,80 @@ TilesetManager.prototype={
 			}
 		}
 		return changed;
+	},
+	applyPainting: function(map, s_x, s_y, calque){
+		//On va détecter les blocs
+		var blocs = new Array();
+		var x, y;
+		var bloc_id = 1;
+		var cell = map.getCell(s_x, s_y);
+		if(!cell) return;
+		//On cherche la valeur à détecter
+		var value = cell.getC(calque);
+		
+		//On commence la recherche
+		for(y=0;y<map.getHeight();y++){
+			blocs[y] = new Array();
+			for(x=0;x<map.getWidth();x++){
+				//On récupère la cellule
+				var c = map.getCell(x,y);
+				//On regarde si la cellule a la bonne valeur
+				if(!Cell.isSame(value, c.getC(calque)))blocs[y][x] = 0;
+				else{
+					//Si c'est la bonne valeur on l'ajoute au bloc qu'il faut :
+					//On regarde si les cellules haute et gauches sont déjà dans un bloc
+					var cur_bloc = -1;
+					//On regarde à gauche
+					if(x > 0 && blocs[y][x-1] > 0){
+						cur_bloc = blocs[y][x-1];
+					}
+					//Puis on regarde en haut
+					if(y > 0 && blocs[y-1][x] > 0){
+						//Si la cellule de gauche était déjà OK, alors on rejoint les deux blocs
+						if(cur_bloc > 0){
+							var x2, y2;
+							var to_replace = blocs[y-1][x];
+							for(y2=0;y2<y;y2++){
+								for(x2=0;x2<map.getWidth();x2++){
+									if(blocs[y2][x2] == to_replace) blocs[y2][x2] = cur_bloc;
+								}
+							}
+						}
+						else{
+						//Sinon on rejoint simplement le bloc du haut
+							cur_bloc = blocs[y-1][x];
+						}
+					}
+					//On regarde si la cellule actuelle a un bloc
+					if(cur_bloc > 0) blocs[y][x] = cur_bloc;
+					else{
+						//Si elle en a pas on lui en crée un
+						blocs[y][x] = bloc_id;
+						bloc_id++;
+					}
+				}
+			}
+		}
+		
+		//On regarde le numéro du bloc dans lequel se trouve notre cellule cible
+		var target_bloc = blocs[s_y][s_x];
+		
+		//On récupere la hauteur et largeur de sélection
+		var s_w = this.selected.x2-this.selected.x1+1;
+		var s_h = this.selected.y2-this.selected.y1+1;
+		
+		for(x=0;x<map.getWidth();x++){
+			for(y=0;y<map.getHeight();y++){
+				//On recherche les cellules du bloc
+				if(blocs[y][x] != target_bloc) continue;
+				var c_x = (x-s_x)%s_w;
+				if(c_x<0) c_x += s_w;
+				var c_y = (y-s_y)%s_h;
+				if(c_y<0) c_y += s_h;
+				map.getCell(x,y).setC(calque, this.tilesets[this.current_tile].getValue(this.selected.x1+c_x, this.selected.y1+c_y));
+			}
+		}
+		return true;
 	}
 };
 
@@ -126,6 +205,9 @@ Tileset.prototype={
 	},
 	getValue:function(x, y){
 		return {tileset:this.id, id: y*this.nbw+x};
+	},
+	getTilePosition: function(id){
+		return {x:id%this.nbw, y:Math.floor(id/this.nbw)};
 	},
 	getPosition: function(cell){
 		var x = (cell.id%this.nbw)*this.manager.getTileWidth();
