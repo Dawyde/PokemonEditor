@@ -32,5 +32,7 @@ Cell.prototype={
 	getC1:function(){ return this.c1; },
 	setC1:function(id){ this.c1 = id; },
 	getC2:function(){ return this.c2; },
-	setC2:function(id){ this.c2 = id; }
+	setC2:function(id){ this.c2 = id; },
+	getC3:function(){ return this.c3; },
+	setC3:function(id){ this.c3 = id; }
 }
