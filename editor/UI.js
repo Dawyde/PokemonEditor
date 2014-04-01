@@ -15,6 +15,8 @@ function MapUI(editor, canvas_id){
 	
 	this.hidden_layout = {1:true, 2:true, 3:true};
 	
+	this.current_element = false;
+	
 }
 
 MapUI.prototype = {
@@ -103,11 +105,13 @@ MapUI.prototype = {
 		if(this.editor.getTool() == 1){//Crayon
 			if(e.datas.b == 1) return;
 			this.isdown = e.datas.b==0?1:2;
+			//Enregistrement de l'historique (pour le Ctrl+Z, Ctrl+Y)
+			this.current_element = new Element();
 			var x = Math.floor(e.datas.x/T_WIDTH);
 			var y = Math.floor(e.datas.y/T_HEIGHT);
 			this.position = {x: x, y:y};
-			if(this.isdown == 2 && this.editor.getTilesetManager().clearCell(this.editor.getMap(), x, y, this.current_layout)) this.draw();
-			else if(this.isdown == 1 && this.editor.getTilesetManager().applySelection(this.editor.getMap(), x, y, this.current_layout)) this.draw();
+			if(this.isdown == 2 && this.editor.getTilesetManager().clearCell(this.editor.getMap(), x, y, this.current_layout, this.current_element)) this.draw();
+			else if(this.isdown == 1 && this.editor.getTilesetManager().applySelection(this.editor.getMap(), x, y, this.current_layout, this.current_element)) this.draw();
 		}
 		else if(this.editor.getTool() == 2){//Pipette
 			var value;
@@ -128,11 +132,19 @@ MapUI.prototype = {
 			var value;
 			var x = Math.floor(e.datas.x/T_WIDTH);
 			var y = Math.floor(e.datas.y/T_HEIGHT);
-			if(this.editor.getTilesetManager().applyPainting(this.editor.getMap(), x, y, this.current_layout)) this.draw();
+			var element = new Element();
+			if(this.editor.getTilesetManager().applyPainting(this.editor.getMap(), x, y, this.current_layout, element)){
+				this.draw();
+				this.editor.getHistory().addElement(element);
+			}
 		}
 	},
 	mouseup: function(e){
 		if(!this.isdown) return;
+		if(this.current_element){
+			this.editor.getHistory().addElement(this.current_element);
+			this.current_element = false;
+		}
 		this.isdown = false;
 	},
 	mousemove: function(e){
@@ -141,8 +153,8 @@ MapUI.prototype = {
 		var y = Math.floor(e.datas.y/T_HEIGHT);
 		if(x == this.position.x && y == this.position.y) return;
 		this.position = {x: x, y:y};
-		if(this.isdown == 2 && this.editor.getTilesetManager().clearCell(this.editor.getMap(), x, y, this.current_layout)) this.draw();
-		else if(this.isdown == 1 && this.editor.getTilesetManager().applySelection(this.editor.getMap(), x, y, this.current_layout)) this.draw();
+		if(this.isdown == 2 && this.editor.getTilesetManager().clearCell(this.editor.getMap(), x, y, this.current_layout, this.current_element)) this.draw();
+		else if(this.isdown == 1 && this.editor.getTilesetManager().applySelection(this.editor.getMap(), x, y, this.current_layout, this.current_element)) this.draw();
 	}
 };
 

@@ -16,9 +16,26 @@ function EditorManager(sets){
 	
 	this.current_tool = 1;
 	
+	this.history = new History(this.map);
+	
+	
+	
 }
 
 EditorManager.prototype={
+	cancel: function(){
+		if(this.history.cancel()){
+			this.map_ui.draw();
+		}
+	},
+	restore: function(){
+		if(this.history.restore()){
+			this.map_ui.draw();
+		}
+	},
+	getHistory: function(){
+		return this.history;
+	},
 	editorReady:function(){
 		this.tileset_ui.init();
 		this.map_ui.init();

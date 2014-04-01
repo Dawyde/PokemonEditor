@@ -61,7 +61,7 @@ TilesetManager.prototype={
 		this.setSelection(value.x, value.y, value.x, value.y);
 		this.dispatcher.dispatchEvent('selectionchange');
 	},
-	clearCell: function(map, s_x, s_y, calque){
+	clearCell: function(map, s_x, s_y, calque, element){
 		var cell = map.getCell(s_x,s_y);
 		if(!cell) return;
 		var current_value;
@@ -70,6 +70,7 @@ TilesetManager.prototype={
 		else current_value = cell.getC3();
 		
 		if(current_value == false) return false;
+		element.addAction(s_x, s_y, calque, current_value, false);
 		
 		if(calque == 1) cell.setC1(false);
 		else if(calque == 2) cell.setC2(false);
@@ -77,7 +78,7 @@ TilesetManager.prototype={
 		
 		return true;
 	},
-	applySelection: function(map, s_x, s_y, calque){
+	applySelection: function(map, s_x, s_y, calque, element){
 		//On applique la sélection du tileset à la cellule fournie en parametre
 		var changed = false;
 		var x,y;
@@ -97,6 +98,7 @@ TilesetManager.prototype={
 				//On vérifie qu'il y a bien modification
 				if(!current_value || current_value.tileset != value.tileset ||current_value.id != value.id){
 					changed = true;
+					element.addAction(s_x+x,s_y+y, calque, current_value, value);
 					if(calque == 1) cell.setC1(value);
 					else if(calque == 2) cell.setC2(value);
 					else cell.setC3(value);
@@ -105,7 +107,7 @@ TilesetManager.prototype={
 		}
 		return changed;
 	},
-	applyPainting: function(map, s_x, s_y, calque){
+	applyPainting: function(map, s_x, s_y, calque, element){
 		//On va détecter les blocs
 		var blocs = new Array();
 		var x, y;
@@ -174,7 +176,9 @@ TilesetManager.prototype={
 				if(c_x<0) c_x += s_w;
 				var c_y = (y-s_y)%s_h;
 				if(c_y<0) c_y += s_h;
-				map.getCell(x,y).setC(calque, this.tilesets[this.current_tile].getValue(this.selected.x1+c_x, this.selected.y1+c_y));
+				var value =  this.tilesets[this.current_tile].getValue(this.selected.x1+c_x, this.selected.y1+c_y);
+				element.addAction(x, y, calque, map.getCell(x,y).getC(calque), value);
+				map.getCell(x,y).setC(calque, value);
 			}
 		}
 		return true;

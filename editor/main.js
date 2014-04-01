@@ -17,6 +17,16 @@ window.onload = function(){
 	new_map();*/
 	editor = new EditorManager(['tileset/tile1.png']);
 	$(document).mouseup(function(e){ editor.mouseUp(e); });
+	$(document).keydown(function(e){
+		if(e.ctrlKey && e.keyCode == 90){
+			editor.cancel();
+			return false;
+		}
+		else if(e.ctrlKey && e.keyCode == 89){
+			editor.restore();
+			return false;
+		}
+	});
 	editor.getMapUI().addEventListener(false, 'layoutchange', layoutChange);
 	editor.getMapUI().addEventListener(false, 'hiddenlayoutchange', hiddenLayoutChange);
 	editor.addEventListener(false, 'toolchange', toolChange);

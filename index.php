@@ -9,6 +9,7 @@
 	<script type="text/javascript" src="editor/EditorManager.js"></script>
 	<script type="text/javascript" src="editor/EventDispatcher.js"></script>
 	<script type="text/javascript" src="editor/UI.js"></script>
+	<script type="text/javascript" src="editor/History.js"></script>
 	<script type="text/javascript" src="editor/main.js"></script>
 	<style>
 		body{
@@ -57,6 +58,8 @@
 	<div id="box_toolbar" class="btn-toolbar">
 	  <div class="btn-group">
 		<span class="btn btn-medium" title="Nouveau" onClick="new_map();">New</span>
+		<span class="btn btn-medium" title="Nouveau" onClick="editor.cancel();">Cancel</span>
+		<span class="btn btn-medium" title="Nouveau" onClick="editor.restore();">Restore</span>
 	  </div>
 	  <!-- Calques -->
 	  <div class="btn-group" id="active_calque">
