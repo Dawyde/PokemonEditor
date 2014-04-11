@@ -63,5 +63,17 @@ EditorManager.prototype={
 	},
 	getMapUI: function(){
 		return this.map_ui;
+	},
+	save: function(){
+		//var name = prompt("Nom de la map : ", "");
+		var s = this.map.save();
+		console.log(s);
+		$.ajax({
+			url:'save.php',
+			type:'post',
+			data: {map:s},
+			success: function(e){
+			}
+		});
 	}
 }

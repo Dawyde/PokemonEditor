@@ -18,8 +18,18 @@ Map.prototype={
 		return this.cells[y][x];
 	},
 	getWidth: function(){ return this.width; },
-	getHeight: function(){ return this.height; }
-
+	getHeight: function(){ return this.height; },
+	save: function(){
+		var retour = new  Array();
+		var x, y;
+		for(y=0;y<this.height;y++){
+			retour[y] = new Array();
+			for(x=0;x<this.width;x++){
+				retour[y][x] = this.cells[y][x].save();
+			}
+		}
+		return retour;
+	}
 }
 
 function Cell(){
@@ -51,5 +61,13 @@ Cell.prototype={
 		else if(id ==3) this.c3 = value;
 		else return false;
 		return true;
+	},
+	save: function(){
+		var retour = new Object();
+		retour.l1 = (this.c1)?this.c1.id:-1;
+		retour.l2 = (this.c2)?this.c2.id:-1;
+		retour.l3 = (this.c3)?this.c3.id:-1;
+		
+		return retour;
 	}
 }
