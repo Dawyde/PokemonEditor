@@ -26,6 +26,10 @@ window.onload = function(){
 			editor.restore();
 			return false;
 		}
+		else if(e.ctrlKey && e.keyCode == 83){
+			console.log(editor.getMap().getSave());
+			return false;
+		}
 	});
 	editor.getMapUI().addEventListener(false, 'layoutchange', layoutChange);
 	editor.getMapUI().addEventListener(false, 'hiddenlayoutchange', hiddenLayoutChange);
