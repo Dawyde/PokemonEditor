@@ -31,7 +31,7 @@ Map.prototype={
 				retour.cells[y][x] = this.cells[y][x].getSave();
 			}
 		}
-		return JSON.stringify(retour);
+		return retour;
 	}
 }
 
@@ -39,8 +39,10 @@ function Cell(){
 	this.c1 = false;
 	this.c2 = false;
 	this.c3 = false;
+	this.t = 0;
 }
-Cell.isSame = function(c1, c2){
+Cell.isSame = function(calque, c1, c2){
+	if(calque == 4) return c1==c2;
 	if(c1 == false && c2 == false) return true;
 	else if(c1 == undefined || c1.id == undefined || c1.tileset == undefined || c2 == undefined || c2.id == undefined || c2.tileset == undefined) return false;
 	return c1.id == c2.id && c1.tileset == c2.tileset;
@@ -52,20 +54,24 @@ Cell.prototype={
 	setC2:function(id){ this.c2 = id; },
 	getC3:function(){ return this.c3; },
 	setC3:function(id){ this.c3 = id; },
+	getT:function(){ return this.t; },
+	setT:function(id){ this.t = id; },
 	getC:function(id) {
 		if(id == 1) return this.c1;
 		else if(id==2) return this.c2;
 		else if(id ==3) return this.c3;
+		else if(id ==4) return this.t;
 		return false;
 	},
 	setC: function(id, value){
 		if(id == 1) this.c1 = value;
 		else if(id==2) this.c2 = value;
 		else if(id ==3) this.c3 = value;
+		else if(id ==4) this.t = value;
 		else return false;
 		return true;
 	},
 	getSave: function(){
-		return {l1: (this.c1)?this.c1.id:-1, l2: (this.c2)?this.c2.id:-1, l3: (this.c3)?this.c3.id:-1};
+		return {l1: (this.c1)?this.c1.id:-1, l2: (this.c2)?this.c2.id:-1, l3: (this.c3)?this.c3.id:-1, t:this.t};
 	}
 }

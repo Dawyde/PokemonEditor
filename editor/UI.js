@@ -13,7 +13,7 @@ function MapUI(editor, canvas_id){
 	this.position = false;
 	this.current_layout = 1;
 	
-	this.hidden_layout = {1:true, 2:true, 3:true};
+	this.hidden_layout = {1:true, 2:true, 3:true, 4:true};
 	
 	this.current_element = false;
 	
@@ -31,6 +31,7 @@ MapUI.prototype = {
 	mapchange: function(){
 		var map = this.editor.getMap();
 		if(!map) return;
+		console.log(map);
 		
 		this.element.width = map.getWidth()*T_WIDTH;
 		this.element.height = map.getHeight()*T_HEIGHT;
@@ -60,6 +61,7 @@ MapUI.prototype = {
 		this.drawCalque(this.ctx, 1);
 		this.drawCalque(this.ctx, 2);
 		this.drawCalque(this.ctx, 3);
+		this.drawTypeCalque(this.ctx);
 		
 		var i, j;
 		this.ctx.strokeStyle='gray';
@@ -92,6 +94,23 @@ MapUI.prototype = {
 		}
 		ctx.globalAlpha = 1;
 	},
+	drawTypeCalque: function(ctx){
+		if(!this.hidden_layout[4]) return ;
+		if(this.current_layout != 4) ctx.globalAlpha = 0.3;
+		else ctx.globalAlpha = 0.5
+		var x, y;
+		var map = this.editor.getMap();
+		for(y=0;y<map.getHeight();y++){
+			for(x=0;x<map.getWidth();x++){
+				var c = map.getCell(x,y).getT();
+				if(c == 0) continue;
+				var colors = [0,"#FF0000", "#00AAFF", "#00FF00"];
+				ctx.fillStyle=colors[c];
+				ctx.fillRect(x*T_WIDTH, y*T_HEIGHT, T_WIDTH, T_HEIGHT);
+			}
+		}
+		ctx.globalAlpha = 1;
+	},
 	drawCell: function(ctx, x, y, cell){
 		if(!cell) return;
 		var tileset = this.editor.getTilesetManager().getTileset(cell.tileset);
@@ -120,6 +139,13 @@ MapUI.prototype = {
 			if(this.current_layout == 1) value = this.editor.getMap().getCell(x, y).getC1();
 			else if(this.current_layout == 2) value = this.editor.getMap().getCell(x, y).getC2();
 			else if(this.current_layout == 3) value = this.editor.getMap().getCell(x, y).getC3();
+			else if(this.current_layout == 4){
+				value = this.editor.getMap().getCell(x, y).getT();
+				this.editor.setSelectedType(value);
+				//Puis on retourne à la pipette
+				this.editor.setTool(1);
+				return;
+			}
 			else return;
 			if(value){
 				//On enregistre la sélection

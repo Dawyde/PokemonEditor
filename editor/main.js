@@ -6,6 +6,9 @@ var T_HEIGHT = 32;
 var T_MAX = 8;
 
 var maps = false;
+var charset_manager;
+var npc_manager;
+var reply_manager;
 
 window.onload = function(){
 	/*this.tilesets = new TilesetManager(T_WIDTH, T_HEIGHT);
@@ -16,6 +19,9 @@ window.onload = function(){
 	this.tilesets.init();
 	new_map();*/
 	editor = new EditorManager(['tileset/tile1.png']);
+	charset_manager = new CharsetManager(152, $('#CharsetModal'));
+	npc_manager = new NPCTemplates();
+	reply_manager = new ReplyManager();
 	$(document).mouseup(function(e){ editor.mouseUp(e); });
 	$(document).keydown(function(e){
 		if(e.ctrlKey && e.keyCode == 90){
@@ -27,13 +33,19 @@ window.onload = function(){
 			return false;
 		}
 		else if(e.ctrlKey && e.keyCode == 83){
-			console.log(editor.getMap().getSave());
+			editor.save();
+			return false;
+		}
+		else if(e.ctrlKey && e.keyCode == 79){
+			editor.open();
 			return false;
 		}
 	});
 	editor.getMapUI().addEventListener(false, 'layoutchange', layoutChange);
 	editor.getMapUI().addEventListener(false, 'hiddenlayoutchange', hiddenLayoutChange);
 	editor.addEventListener(false, 'toolchange', toolChange);
+	
+	
 }
 
 function toogleHiddenLayout(id){

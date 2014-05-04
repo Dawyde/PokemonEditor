@@ -74,7 +74,8 @@ TilesetManager.prototype={
 		
 		if(calque == 1) cell.setC1(false);
 		else if(calque == 2) cell.setC2(false);
-		else cell.setC3(false);
+		else if(calque == 3) cell.setC3(false);
+		else cell.setT(0);
 		
 		return true;
 	},
@@ -88,20 +89,32 @@ TilesetManager.prototype={
 				var cell = map.getCell(s_x+x,s_y+y);
 				if(!cell) continue;
 				//On récupère la valeur sélectionnée
-				var value = this.tilesets[this.current_tile].getValue(this.selected.x1+x, this.selected.y1+y);
-				if(!value) continue;
+				if(calque == 4) var value = editor.getSelectedType();
+				else{
+					var value =  this.tilesets[this.current_tile].getValue(this.selected.x1+x, this.selected.y1+y);
+					if(!value) continue;
+				}
 				//On vérifie si y'a à appliquer
-				var current_value;
-				if(calque == 1) current_value = cell.getC1();
-				else if(calque == 2) current_value = cell.getC2();
-				else current_value = cell.getC3();
-				//On vérifie qu'il y a bien modification
-				if(!current_value || current_value.tileset != value.tileset ||current_value.id != value.id){
-					changed = true;
-					element.addAction(s_x+x,s_y+y, calque, current_value, value);
-					if(calque == 1) cell.setC1(value);
-					else if(calque == 2) cell.setC2(value);
-					else cell.setC3(value);
+				if(calque == 4){
+					if(cell.getT() != value){
+						changed = true;
+						element.addAction(s_x+x, s_y+y, calque, cell.getT(), value);
+						cell.setT(value);
+					}
+				}
+				else{
+					var current_value;
+					if(calque == 1) current_value = cell.getC1();
+					else if(calque == 2) current_value = cell.getC2();
+					else current_value = cell.getC3();
+					//On vérifie qu'il y a bien modification
+					if(!current_value || current_value.tileset != value.tileset ||current_value.id != value.id){
+						changed = true;
+						element.addAction(s_x+x,s_y+y, calque, current_value, value);
+						if(calque == 1) cell.setC1(value);
+						else if(calque == 2) cell.setC2(value);
+						else cell.setC3(value);
+					}
 				}
 			}
 		}
@@ -124,7 +137,7 @@ TilesetManager.prototype={
 				//On récupère la cellule
 				var c = map.getCell(x,y);
 				//On regarde si la cellule a la bonne valeur
-				if(!Cell.isSame(value, c.getC(calque)))blocs[y][x] = 0;
+				if(!Cell.isSame(calque, value, c.getC(calque)))blocs[y][x] = 0;
 				else{
 					//Si c'est la bonne valeur on l'ajoute au bloc qu'il faut :
 					//On regarde si les cellules haute et gauches sont déjà dans un bloc
@@ -176,7 +189,8 @@ TilesetManager.prototype={
 				if(c_x<0) c_x += s_w;
 				var c_y = (y-s_y)%s_h;
 				if(c_y<0) c_y += s_h;
-				var value =  this.tilesets[this.current_tile].getValue(this.selected.x1+c_x, this.selected.y1+c_y);
+				if(calque == 4) var value = editor.getSelectedType();
+				else var value =  this.tilesets[this.current_tile].getValue(this.selected.x1+c_x, this.selected.y1+c_y);
 				element.addAction(x, y, calque, map.getCell(x,y).getC(calque), value);
 				map.getCell(x,y).setC(calque, value);
 			}
@@ -219,6 +233,7 @@ Tileset.prototype={
 		return {x:x, y:y};
 	},
 	isLoaded: function(){ return this.loaded; },
+	getId: function(){ return this.id },
 	setId: function(id){ this.id = id; },
 	getTilesX: function(){ return this.nbw; },
 	getTilesY: function(){ return this.nbh; },

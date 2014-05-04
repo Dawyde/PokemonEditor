@@ -1,0 +1,99 @@
+body{
+	width:1150px;
+	margin:auto;
+}
+body .modal{
+	width:900px;
+	margin-left:-450px;
+}
+#box_toolbar{
+	width:1100px;
+	height:30px;
+}
+#box_map{
+	width:802px;
+	height:600px;
+	border:1px solid black;
+	float:left;
+	overflow:auto;
+}
+#box_tile{
+	width:300px;
+	border:1px solid black;
+	margin-left:804px;
+	height:600px;
+	overflow:auto;
+}
+.icon-pipette{
+	background-image: url('bootstrap/img/pipette.png');
+	background-position: 0px;
+	width:19px;
+	height:19px;
+}
+.icon-pencil{
+	background-image: url('bootstrap/img/pencil.png');
+	background-position: 0px;
+	width:19px;
+	height:19px;
+}
+.icon-peinture{
+	background-image: url('bootstrap/img/peinture.png');
+	background-position: 0px;
+	width:19px;
+	height:19px;
+}
+#npc_left, #reply_left{
+	width:200px;
+	float:left;
+}
+#npc_left select, #reply_left select{
+	height:300px;
+}
+#npc_left button, #reply_left button{
+	width:100%;
+}
+#npc_central, #reply_central{
+	margin-left:260px;
+}
+#npc_central input, #reply_central input{
+	height:30px;
+}
+#npc_central label, #reply_central label{
+	width:120px;
+	display:inline-block;
+}
+#reply_central select{
+	margin-top:10px;
+}
+#npc_central #npc_charset{
+	float:right;
+	margin-right:300px;
+	border:1px solid black;
+}
+#reply_effects div{
+	width:400px;
+	min-height:50px;
+	border-bottom:1px solid #BBB;
+}
+#reply_effects .title{
+	font-weight: bold;
+	color:#777;
+}
+#reply_effects .delete{
+	float:right;
+	font-weight: bold;
+	color:#777;
+	cursor:default;
+}
+#reply_effects .delete:hover{
+	color:#A00;
+}
+#reply_effects p{
+	margin-left:20px;
+}
+#reply_effects input{
+	width:100px;
+	height:20px;
+	padding:0px;
+	margin-top:5px;
+}
