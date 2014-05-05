@@ -103,5 +103,22 @@ CharsetManager.prototype={
 			this.cury = y;
 			this.updateView();
 		}
+	},
+	getCharset: function(id){
+		if(!this.images[id] || this.images[id].width == 0) return false;
+		return new Charset(this.images[id]);
 	}
+};
+
+
+function Charset(image){
+	this.image = image;
+	this.cw = image.width/4;
+	this.ch = image.height/4;
+}
+
+Charset.prototype={
+	draw: function(ctx, x, y){
+		ctx.drawImage(this.image,0,0,this.cw, this.ch, x+T_WIDTH/2-this.cw/2, y+T_WIDTH-this.ch, this.cw , this.ch);
+	},
 };

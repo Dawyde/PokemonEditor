@@ -5,11 +5,17 @@ var T_HEIGHT = 32;
 
 var T_MAX = 8;
 
+var TAB_MAP = 1;
+var TAB_NPC = 2;
+var TAB_DIALOG = 3;
+var TAB_REPLY= 4;
+
 var maps = false;
 var charset_manager;
 var npc_manager;
 var reply_manager;
 var dialog_manager;
+var mode = TAB_MAP;
 
 window.onload = function(){
 	/*this.tilesets = new TilesetManager(T_WIDTH, T_HEIGHT);
@@ -24,22 +30,30 @@ window.onload = function(){
 	npc_manager = new NPCTemplates();
 	reply_manager = new ReplyManager();
 	dialog_manager = new DialogManager();
+	
+	$('a[data-toggle="tab"]').on('shown', function (e) {
+	  var anchor = e.target.href.substring(e.target.href.indexOf("#")+1);
+	  if(anchor == 'npc') mode = TAB_NPC;
+	  else if(anchor == 'dialog') mode = TAB_DIALOG;
+	  else if(anchor == 'reply') mode = TAB_REPLY;
+	  else mode = TAB_MAP;
+	})
 	$(document).mouseup(function(e){ editor.mouseUp(e); });
 	$(document).keydown(function(e){
 		if(e.ctrlKey && e.keyCode == 90){
-			editor.cancel();
+			if(mode == TAB_MAP) editor.cancel();
 			return false;
 		}
 		else if(e.ctrlKey && e.keyCode == 89){
-			editor.restore();
+			if(mode == TAB_MAP) editor.restore();
 			return false;
 		}
 		else if(e.ctrlKey && e.keyCode == 83){
-			editor.save();
+			if(mode == TAB_MAP) editor.save();
 			return false;
 		}
 		else if(e.ctrlKey && e.keyCode == 79){
-			editor.open();
+			if(mode == TAB_MAP) editor.open();
 			return false;
 		}
 	});

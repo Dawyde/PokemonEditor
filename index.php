@@ -92,6 +92,25 @@
 		<div id="box_tile">
 			<canvas width="275" height="600" id="tiles"></canvas>
 		</div>
+		<div id="map_npc">
+			<span class="title">PNJ de la Map</span>
+			<div class="row">
+				<div class="span3">
+					<select id="map_npc_list" multiple="true">
+					
+					</select>
+				</div>
+				<div class="span3">
+					Col
+				</div>
+				<div class="span3">
+					Col
+				</div>
+				<div class="span3">
+					Col
+				</div>
+			</div>
+		</div>
 	</div>
 	<div class="tab-pane" id="npc">
 		<div id="npc_left">
@@ -129,8 +148,13 @@
 		<div id="dialog_central">
 			<label for="dialog_id">Id : </label><input type="number" id="dialog_id" class="input-medium"><br/>
 			
-			<label for="dialog_text">Texte : </label><input type="text" id="dialog_text" class="input-xlarge"><br/>
-			<label for="dialog_condition">Condition : </label><input type="text" id="dialog_condition" class="input-xlarge"><br/>
+			<label for="dialog_text">Texte : </label><textarea id="dialog_text" class="input-xxlarge"></textarea><br/>
+			
+			<div class="control-group" id="dialog_condition_control">
+				<label for="dialog_condition">Condition : </label>
+				<input type="text" id="dialog_condition" class="input-xlarge error"><span class="help-inline" id="dialog_condition_help"></span><br/>
+			</div>
+			
 			<label for="dialog_dialog">Dialog : </label>
 			<div class="input-append" style="margin:0px;padding:0px;">
 				<span class="input-medium uneditable-input" id="dialog_dialog_view">Aucun</span>
@@ -169,6 +193,7 @@
 				<select id="reply_effect_types">
 					<option value="1">Ajouter/Retirer de l'Argent</option>
 					<option value="2">Ajouter/Retirer un Objet</option>
+					<option value="3">Nouveau Dialog</option>
 				</select>
 				<input type="button" id="reply_effect_add" class="btn" value="Ajouter"/>
 			</div>

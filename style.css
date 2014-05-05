@@ -57,6 +57,7 @@ body .modal{
 }
 #npc_central input, #reply_central input, #dialog_central input{
 	height:30px;
+	margin-bottom:5px;
 }
 #npc_central label, #reply_central label, #dialog_central label{
 	width:120px;
@@ -70,21 +71,18 @@ body .modal{
 	margin-right:300px;
 	border:1px solid black;
 }
-#reply_effects div{
+#reply_effects>div{
 	width:400px;
 	min-height:50px;
-	border-bottom:1px solid #BBB;
+	border-left:4px solid #BBB;
+	padding-left:10px;
+	margin-bottom:5px;
 }
 #reply_effects .title{
 	font-weight: bold;
 	color:#777;
 }
-#reply_effects .delete{
-	float:right;
-	font-weight: bold;
-	color:#777;
-	cursor:default;
-}
+
 #reply_effects .delete:hover{
 	color:#A00;
 }
@@ -96,4 +94,38 @@ body .modal{
 	height:20px;
 	padding:0px;
 	margin-top:5px;
+}
+#dialog_replies div{
+	width:400px;
+	border-left:4px solid #BBB;
+	padding-left:5px;
+	margin-bottom:5px;
+}
+#dialog_replies .delete, #reply_effects .delete{
+	float:right;
+	font-weight: bold;
+	color:#777;
+	cursor:default;
+}
+#dialog_replies .delete:hover, #reply_effects .delete:hover{
+	color:#A00;
+}
+
+input[type=text]{
+	height:30px;
+	margin-bottom:0px;
+}
+
+#map_npc{
+	width:1104px;
+	border:1px solid black;
+}
+#map_npc .title{
+	display:inline-block;
+	width:100%;
+	background-color:black;
+	color:white;
+}
+#map_npc select{
+	height:200px;
 }

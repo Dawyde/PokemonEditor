@@ -36,7 +36,7 @@ class Reply{
 		$this->datas[$id] = array(
 			'id' => $id,
 			'text' => trim($datas['text']),
-			'ge' => $datas['ge'],
+			'ge' =>(!array_key_exists('ge', $datas)?array():$datas['ge']),
 		);
 		
 		$this->save();

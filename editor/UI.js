@@ -63,6 +63,11 @@ MapUI.prototype = {
 		this.drawCalque(this.ctx, 3);
 		this.drawTypeCalque(this.ctx);
 		
+		if(charset_manager){
+			var cs = charset_manager.getCharset(35);
+			if(cs) cs.draw(this.ctx, T_WIDTH,T_WIDTH);
+		}
+		
 		var i, j;
 		this.ctx.strokeStyle='gray';
 		this.ctx.beginPath();

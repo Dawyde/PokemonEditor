@@ -37,7 +37,7 @@ class Dialog{
 			'id' => $id,
 			'text' => trim($datas['text']),
 			'condition' => $datas['condition'],
-			'condition_array' => $datas['condition_array'],
+			'condition_array' =>(!array_key_exists('condition_array', $datas)?array():$datas['condition_array']),
 			'replies' =>(!array_key_exists('replies', $datas)?array():$datas['replies']),
 			'dialog' => $datas['dialog'],
 		);

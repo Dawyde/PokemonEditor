@@ -45,7 +45,7 @@ NPCTemplates.prototype={
 	selectDialog: function(id){
 		this.selected_dialog = id;
 		if(id == -1) $("#npc_dialog_view").html("Aucun");
-		else $("#npc_dialog_view").html("Dialog "+id);
+		else $("#npc_dialog_view").html(id+" - "+dialog_manager.getDialogSummary(id));
 	},
 	selectionChange: function(e){
 		if(this.npc_list[e.datas]){
@@ -85,8 +85,12 @@ NPCTemplates.prototype={
 		$("#npc_id").val(e.datas.id);
 		this.updateNPCList();
 	},
+	dialogSelected: function(e){
+		this.selectDialog(e.datas);
+	},
 	opendialogselection: function(){
-	
+		dialog_manager.openDialog(this.selected_dialog);
+		dialog_manager.setDialogListener(this, this.dialogSelected);
 	},
 	canvasdown: function(){
 		charset_manager.open();

@@ -11,10 +11,12 @@ function ReplyManager(){
 	
 	this.reply_list = [];
 	
+	this.current_ge = -1;
+	
 	this.dispatcher.addEventListener(this, 'addEffectPressed', this.addEffect);
 	this.dispatcher.addEventListener(this, 'newReplyPressed', this.newReply);
 	this.dispatcher.addEventListener(this, 'replyListReceived', this.newReplyList);
-	this.dispatcher.addEventListener(this, 'replySavePressed', this.replySave);
+	this.dispatcher.addEventListener(this, 'replySavePressed', this.save);
 	this.dispatcher.addEventListener(this, 'replySaveSuccess', this.saveSuccess);
 	this.dispatcher.addEventListener(this, 'replyChanged', this.replyChanged);
 	this.dispatcher.addEventListener(this, 'replyValiderPressed', this.validerPressed);
@@ -44,7 +46,7 @@ ReplyManager.prototype={
 		$("#reply_id").val(e.datas.id);
 		this.updateReplyList();
 	},
-	replySave:function(){
+	save:function(){
 		//Sauvegarde de la réponse actuelle
 		var id = $("#reply_id").val();
 		if(id == "") id = -1;
@@ -104,20 +106,12 @@ ReplyManager.prototype={
 		}
 		$("#reply_effects").html(html);
 	},
-	addEffect: function(){
-		var id = parseInt($("#reply_effect_types").val());
-		var nge;
-		if(id == GE_MONNEY) nge = new GameEffect(id, [0]);
-		else if(id == GE_GIVE_ITEM) nge = new GameEffect(id, [0,0]);
-		else return;
-		this.GE[this.GE.length] = nge;
-		this.updateGameEffects();
-	},
 	saveGE: function(){
 		var save = new Array();
 		for(var i in this.GE){
 			this.GE[i].update(i);
-			save[i] = this.GE[i].getData();
+			if(!this.GE[i].isValid()) continue;
+			save[save.length] = this.GE[i].getData();
 		}
 		return save;
 	},
@@ -142,12 +136,33 @@ ReplyManager.prototype={
 	},
 	addReplyListener: function(context, callback){
 		this.dispatcher.addEventListener(context, 'replySelected', callback);
+	},
+	addEffect: function(){
+		var id = parseInt($("#reply_effect_types").val());
+		var nge;
+		if(id == GE_MONNEY) nge = new GameEffect(id, [0]);
+		else if(id == GE_GIVE_ITEM) nge = new GameEffect(id, [0,0]);
+		else if(id == GE_DIALOG) nge = new GameEffect(id, [-1]);
+		else return;
+		this.GE[this.GE.length] = nge;
+		this.updateGameEffects();
+	},
+	selectDialog: function(ge_index){
+		this.current_ge = ge_index;
+		dialog_manager.setDialogListener(this, this.dialogSelected);
+		dialog_manager.openDialog(this.GE[ge_index].getValue(0));
+	},
+	dialogSelected: function(e){
+		$("#reply_gr_"+this.current_ge+"_view").html(e.datas==-1?"Aucun":e.datas+" - "+dialog_manager.getDialogSummary(e.datas));
+		this.GE[this.current_ge].setValue(0, e.datas);
+		
 	}
 };
 
 
 var GE_MONNEY = 1;
 var GE_GIVE_ITEM = 2;
+var GE_DIALOG = 3;
 
 function GameEffect(type, args){
 	this.type = type;
@@ -164,9 +179,24 @@ GameEffect.prototype={
 		else if(this.type == GE_GIVE_ITEM){
 			html += "Ajouter/Retirer Objet</span><p><label>Id Objet : </label><input type='number' id='"+hid+"_v1' value='"+this.args[0]+"'/><br/><label>Quantité : </label><input type='number' id='"+hid+"_v2' value='"+this.args[1]+"'/></p>";
 		}
+		else if(this.type == GE_DIALOG){
+			html += "Nouveau dialog</span><p><div class='input-append' style='margin:0px;padding:0px;'><span class='input-xlarge uneditable-input' id='"+hid+"_view'>";
+			if(this.args[0] == -1) html += "Aucun";
+			else html += this.args[0]+" - "+dialog_manager.getDialogSummary(this.args[0]);
+			html+= "</span><button class='btn' onClick='reply_manager.selectDialog("+id+");'>Parcourir</button></div></p>";
+		}
 		
 		html += "</div>";
 		return html;
+	},
+	getValue: function(id){
+		return this.args[id];
+	},
+	setValue: function(id, value){
+		this.args[id] = value;
+	},
+	isValid: function(){
+		return this.type == GE_MONNEY || this.type == GE_GIVE_ITEM || this.type == GE_DIALOG;
 	},
 	update: function(id){
 		var hid = 'reply_gr_'+id;
@@ -176,6 +206,8 @@ GameEffect.prototype={
 		}
 		else if(this.type == GE_GIVE_ITEM){
 			if(document.getElementById(hid+"_v2")) this.args = [parseInt($("#"+hid+"_v1").val()), parseInt($("#"+hid+"_v2").val())];
+		}
+		else if(this.type == GE_DIALOG){
 		}
 	},
 	getData: function(){

@@ -31,7 +31,7 @@ function ConditionParser(expression){
 ConditionParser.prototype = {
 	parse: function(){
 		try{
-			this.condition = this.readExpression();
+			this.condition = this.readExpression().getArray();
 			this.valid = true;
 		}
 		catch(exception){
@@ -45,7 +45,7 @@ ConditionParser.prototype = {
 		return this.error;
 	},
 	getCondition: function(){
-		return this.expression.getArray();
+		return this.condition;
 	},
 	readExpression: function(){
 		var retour = new ConditionExpression();
@@ -210,7 +210,7 @@ ConditionFunction.prototype={
 		}
 		else throw "Fonction "+this.name+" innexistante";
 		
-		return [type, args];
+		return [type, this.args];
 	}
 };
 
