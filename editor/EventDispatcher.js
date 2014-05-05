@@ -11,6 +11,9 @@ EventDispatcher.prototype={
 		if(!this.events[event_name]) this.events[event_name] = new Array()
 		this.events[event_name].push([callbackObj, callback]);
 	},
+	setEventListener:function(callbackObj, event_name, callback){
+		this.events[event_name] =[[callbackObj, callback]];
+	},
 	dispatchEvent: function(event_name, datas){
 		if(!this.events[event_name]) return false;
 		var i;

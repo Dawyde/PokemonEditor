@@ -9,6 +9,7 @@ var maps = false;
 var charset_manager;
 var npc_manager;
 var reply_manager;
+var dialog_manager;
 
 window.onload = function(){
 	/*this.tilesets = new TilesetManager(T_WIDTH, T_HEIGHT);
@@ -22,6 +23,7 @@ window.onload = function(){
 	charset_manager = new CharsetManager(152, $('#CharsetModal'));
 	npc_manager = new NPCTemplates();
 	reply_manager = new ReplyManager();
+	dialog_manager = new DialogManager();
 	$(document).mouseup(function(e){ editor.mouseUp(e); });
 	$(document).keydown(function(e){
 		if(e.ctrlKey && e.keyCode == 90){

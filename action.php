@@ -10,6 +10,7 @@ function prepareName($name){
 require('class/Map.class.php');
 require('class/NPC.class.php');
 require('class/Reply.class.php');
+require('class/Dialog.class.php');
 
 if(!empty($_POST['action'])){
 	$action = $_POST['action'];
@@ -31,6 +32,15 @@ if(!empty($_POST['action'])){
 		$r = new Reply();
 		$id = intval($_POST['id']);
 		echo json_encode($r->updateReply($_POST));
+	}
+	elseif($action == 'dialog_list'){
+		$r = new Dialog();
+		echo json_encode($r->getList());
+	}
+	elseif($action == 'dialog_save'){
+		$r = new Dialog();
+		$id = intval($_POST['id']);
+		echo json_encode($r->updateDialog($_POST));
 	}
 
 }

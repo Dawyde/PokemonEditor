@@ -42,23 +42,23 @@ body .modal{
 	width:19px;
 	height:19px;
 }
-#npc_left, #reply_left{
+#npc_left, #reply_left, #dialog_left{
 	width:200px;
 	float:left;
 }
-#npc_left select, #reply_left select{
+#npc_left select, #reply_left select, #dialog_left select{
 	height:300px;
 }
-#npc_left button, #reply_left button{
+#npc_left button, #reply_left button, #dialog_left button{
 	width:100%;
 }
-#npc_central, #reply_central{
+#npc_central, #reply_central, #dialog_central{
 	margin-left:260px;
 }
-#npc_central input, #reply_central input{
+#npc_central input, #reply_central input, #dialog_central input{
 	height:30px;
 }
-#npc_central label, #reply_central label{
+#npc_central label, #reply_central label, #dialog_central label{
 	width:120px;
 	display:inline-block;
 }

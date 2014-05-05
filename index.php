@@ -15,6 +15,7 @@
 	<script type="text/javascript" src="editor/ConditionManager.js"></script>
 	<script type="text/javascript" src="editor/NPCTemplates.js"></script>
 	<script type="text/javascript" src="editor/Reply.js"></script>
+	<script type="text/javascript" src="editor/Dialog.js"></script>
 	<script type="text/javascript" src="editor/main.js"></script>
 	<style>
 
@@ -24,6 +25,7 @@
 <ul class="nav nav-tabs" id="editorTab">
   <li class="active"><a href="#mapeditor" data-toggle="tab">Map</a></li>
   <li><a href="#npc" data-toggle="tab">NPC</a></li>
+  <li><a href="#dialog" data-toggle="tab">Dialog</a></li>
   <li><a href="#reply" data-toggle="tab">Réponses</a></li>
 </ul>
 
@@ -66,7 +68,8 @@
 				<span class="caret"></span>
 				</a>
 				<ul class="dropdown-menu">
-					<li><a onClick="npc_manager.openDialog();" id="op_layer_opacity">Liste de Charset</a></li>
+					<li><a onClick="npc_manager.openDialog();" id="op_layer_opacity">Liste de NPC</a></li>
+					<li><a onClick="reply_manager.openDialog();" id="op_layer_opacity">Liste de Reply</a></li>
 				</ul>
 			</div>
 			
@@ -113,6 +116,35 @@
 			<p>
 				<button class="btn btn-success" id="npc_save">Enregistrer</button>
 			</p>
+		</div>
+	</div>
+	<div class="tab-pane" id="dialog">
+		<div id="dialog_left">
+			Liste des Dialog :
+			<select multiple="true" id="dialog_list">
+			
+			</select>
+			<button class="btn" id="dialog_new">Nouveau Dialog</button>
+		</div>
+		<div id="dialog_central">
+			<label for="dialog_id">Id : </label><input type="number" id="dialog_id" class="input-medium"><br/>
+			
+			<label for="dialog_text">Texte : </label><input type="text" id="dialog_text" class="input-xlarge"><br/>
+			<label for="dialog_condition">Condition : </label><input type="text" id="dialog_condition" class="input-xlarge"><br/>
+			<label for="dialog_dialog">Dialog : </label>
+			<div class="input-append" style="margin:0px;padding:0px;">
+				<span class="input-medium uneditable-input" id="dialog_dialog_view">Aucun</span>
+				<button class="btn" id="dialog_dialog" type="button">Parcourir</button>
+			</div><br/>
+			<input type="button" class="btn btn-success" id="dialog_save" value="Enregistrer"/>
+			<hr/>
+			<b>Réponses :</b>
+			<div id="dialog_replies">
+			
+			</div>
+			<div>
+				<input type="button" id="dialog_add_reply" class="btn" value="Ajouter une réponse"/>
+			</div>
 		</div>
 	</div>
 	<div class="tab-pane" id="reply">
@@ -171,6 +203,34 @@
 		<div class="modal-footer">
 			<button class="btn" data-dismiss="modal" aria-hidden="true">Annuler</button>
 			<button class="btn btn-info" id="npc_c_valider">Ajouter</button>
+		</div>
+	</div>
+	<div id="DialogModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="DialogModalLabel" aria-hidden="true">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3 id="DialogModalLabel">Liste des Dialogs</h3>
+		</div>
+		<div class="modal-body">
+			Choisissez une question :
+			<select id="dialog_c_list"></select>
+		</div>
+		<div class="modal-footer">
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Annuler</button>
+			<button class="btn btn-info" id="dialog_c_valider">Valider</button>
+		</div>
+	</div>
+	<div id="ReplyModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="ReplyModalLabel" aria-hidden="true">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3 id="NPCModalLabel">Liste de Réponses</h3>
+		</div>
+		<div class="modal-body">
+			Choisissez une réponse :
+			<select id="reply_c_list"></select>
+		</div>
+		<div class="modal-footer">
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Annuler</button>
+			<button class="btn btn-info" id="reply_c_valider">Valider</button>
 		</div>
 	</div>
 </body>

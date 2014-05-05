@@ -5,6 +5,7 @@ function ReplyManager(){
 	document.getElementById('reply_effect_add').onmousedown = function(e){ reply_manager.dispatcher.dispatchEvent('addEffectPressed', {x: e.offsetX, y : e.offsetY, b: e.button}); return false;};
 	document.getElementById('reply_new').onmousedown = function(e){ reply_manager.dispatcher.dispatchEvent('newReplyPressed', {x: e.offsetX, y : e.offsetY, b: e.button}); return false;};
 	document.getElementById('reply_save').onmousedown = function(e){ reply_manager.dispatcher.dispatchEvent('replySavePressed', {x: e.offsetX, y : e.offsetY, b: e.button}); return false;};
+	document.getElementById('reply_c_valider').onmousedown = function(e){ reply_manager.dispatcher.dispatchEvent('replyValiderPressed', {x: e.offsetX, y : e.offsetY, b: e.button}); return false;};
 	document.getElementById('reply_list').onchange = function(e){ reply_manager.dispatcher.dispatchEvent('replyChanged', this.value); return false;};
 	this.GE = [];
 	
@@ -16,6 +17,7 @@ function ReplyManager(){
 	this.dispatcher.addEventListener(this, 'replySavePressed', this.replySave);
 	this.dispatcher.addEventListener(this, 'replySaveSuccess', this.saveSuccess);
 	this.dispatcher.addEventListener(this, 'replyChanged', this.replyChanged);
+	this.dispatcher.addEventListener(this, 'replyValiderPressed', this.validerPressed);
 	
 	this.updateGameEffects();
 	this.updateReplyList();
@@ -71,6 +73,7 @@ ReplyManager.prototype={
 		}
 		
 		$("#reply_list").html(html);
+		$("#reply_c_list").html(html);
 	},
 	updateReplyList: function(){
 		$.ajax({
@@ -124,6 +127,21 @@ ReplyManager.prototype={
 			this.GE[i] = new GameEffect(object[i][0], object[i][1]);
 		}
 		this.updateGameEffects(true);
+	},
+	getReply: function(id){
+		return this.reply_list[id];
+	},
+	openDialog: function(){
+		$("#ReplyModal").modal('show');
+		$('#reply_c_list').val(1);
+	},
+	validerPressed: function(){
+		$("#ReplyModal").modal("hide");
+		var id = parseInt($("#reply_c_list").val());
+		this.dispatcher.dispatchEvent('replySelected', id);
+	},
+	addReplyListener: function(context, callback){
+		this.dispatcher.addEventListener(context, 'replySelected', callback);
 	}
 };
 
