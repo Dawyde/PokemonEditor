@@ -13,6 +13,8 @@ function MapUI(editor, canvas_id){
 	this.position = false;
 	this.current_layout = 1;
 	
+	this.selected_npc = -1;
+	
 	this.hidden_layout = {1:true, 2:true, 3:true, 4:true};
 	
 	this.current_element = false;
@@ -27,6 +29,9 @@ MapUI.prototype = {
 		this.element.onmousemove = function(e){ this.d.dispatchEvent('mousemove', {x: e.offsetX, y : e.offsetY} );};
 		this.mapchange();
 		this.draw();
+	},
+	setSelectedNPC: function(id){
+		this.selected_npc = id;
 	},
 	mapchange: function(){
 		var map = this.editor.getMap();
@@ -60,13 +65,10 @@ MapUI.prototype = {
 		//On dessine le calque 0
 		this.drawCalque(this.ctx, 1);
 		this.drawCalque(this.ctx, 2);
+		this.drawNPC(this.ctx);
 		this.drawCalque(this.ctx, 3);
 		this.drawTypeCalque(this.ctx);
 		
-		if(charset_manager){
-			var cs = charset_manager.getCharset(35);
-			if(cs) cs.draw(this.ctx, T_WIDTH,T_WIDTH);
-		}
 		
 		var i, j;
 		this.ctx.strokeStyle='gray';
@@ -99,6 +101,19 @@ MapUI.prototype = {
 		}
 		ctx.globalAlpha = 1;
 	},
+	drawNPC: function(ctx){
+		var npc_list = this.editor.getMap().getNPC();
+		for(var i in npc_list){
+			var npc = npc_list[i];
+			if(i == this.editor.getMap().getSelectedNPC()){
+				ctx.fillStyle = '#FFFFFF';
+				ctx.globalAlpha = 0.5;
+				ctx.fillRect(npc.getX()*T_WIDTH, npc.getY()*T_WIDTH, T_WIDTH, T_WIDTH);
+				ctx.globalAlpha = 1;
+			}
+			npc.getCharset().draw(ctx, npc.getX()*T_WIDTH, npc.getY()*T_WIDTH);
+		}
+	},
 	drawTypeCalque: function(ctx){
 		if(!this.hidden_layout[4]) return ;
 		if(this.current_layout != 4) ctx.globalAlpha = 0.3;
@@ -126,6 +141,15 @@ MapUI.prototype = {
 		this.dispatcher.addEventListener(callbackObj, event_name, callback);
 	},
 	mousedown: function(e){
+		if(this.selected_npc != -1){
+			var x = Math.floor(e.datas.x/T_WIDTH);
+			var y = Math.floor(e.datas.y/T_HEIGHT);
+			this.editor.getMap().addNPC(new NPC(this.selected_npc, x, y));
+			this.selected_npc = -1;
+			this.draw();
+			this.dispatcher.dispatchEvent('npcAdded', false);
+			return;
+		}
 		if(this.editor.getTool() == 1){//Crayon
 			if(e.datas.b == 1) return;
 			this.isdown = e.datas.b==0?1:2;

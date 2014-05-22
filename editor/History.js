@@ -40,7 +40,8 @@ Element.prototype = {
 	addAction: function(x, y, layout, start, end){
 		if(Cell.isSame(start, end)) return;
 		if(this.datas[y] == undefined) this.datas[y] = new Object();
-		this.datas[y][x] = {layout:layout, start:start, end:end};
+		if(this.datas[y][x] != undefined) this.datas[y][x] = {layout: layout, start:this.datas[y][x].start, end:end};
+		else this.datas[y][x] = {layout:layout, start:start, end:end};
 	},
 	cancel:function(map) {
 		var x, y;

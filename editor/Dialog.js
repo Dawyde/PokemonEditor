@@ -32,6 +32,8 @@ function DialogManager(){
 DialogManager.prototype={
 	dialogSaveSuccess: function(e){
 		this.updateDialogList();
+		
+		$("#dialog_id").val(e.datas.id);
 	},
 	conditionChanged: function(){
 		this.checkCondition();

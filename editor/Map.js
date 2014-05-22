@@ -2,6 +2,8 @@ function Map(width, height){
 	this.width = width;
 	this.height = height;
 	this.cells = new Array();
+	this.npc = new Array();
+	this.selected_npc = -1;
 	var x,y;
 	for(y=0;y<height;y++){
 		this.cells[y] = new Array();
@@ -17,6 +19,9 @@ Map.prototype={
 		if(y < 0 || y >= this.height) return false;
 		return this.cells[y][x];
 	},
+	selectNPC: function(id){
+		this.selected_npc = id;
+	},
 	getWidth: function(){ return this.width; },
 	getHeight: function(){ return this.height; },
 	getSave: function(){
@@ -31,7 +36,24 @@ Map.prototype={
 				retour.cells[y][x] = this.cells[y][x].getSave();
 			}
 		}
+		retour.npc = new Array();
+		for(x in this.npc){
+			retour.npc.push(this.npc[x].getSave());
+		}
 		return retour;
+	},
+	//Gestion de PNJ
+	getNPC: function(){
+		return this.npc;
+	},
+	addNPC: function(npc){
+		this.npc.push(npc);
+	},
+	removeNPC: function(id){
+		this.npc.splice(id, 1);
+	},
+	getSelectedNPC: function(){
+		return this.selected_npc;
 	}
 }
 

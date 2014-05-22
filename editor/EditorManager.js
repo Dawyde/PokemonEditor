@@ -119,6 +119,11 @@ EditorManager.prototype={
 				}
 			}
 		}
+		if(data.npc){
+			for(var i in data.npc){
+				this.map.addNPC(new NPC(data.npc[i].id, data.npc[i].x, data.npc[i].y));
+			}
+		}
 		this.dispatcher.dispatchEvent('mapchange', {});
 		this.map_ui.draw();
 		this.history = new History(this.map);

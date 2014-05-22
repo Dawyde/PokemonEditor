@@ -99,15 +99,10 @@
 					<select id="map_npc_list" multiple="true">
 					
 					</select>
+					<button class="btn btn-info" style="width:100%;" id="map_add_npc">Ajouter PNJ</button>
 				</div>
-				<div class="span3">
-					Col
-				</div>
-				<div class="span3">
-					Col
-				</div>
-				<div class="span3">
-					Col
+				<div class="offset1 span3">
+					<button class="btn btn-danger" style="width:100%;" id="map_remove_npc">Supprimer</button>
 				</div>
 			</div>
 		</div>

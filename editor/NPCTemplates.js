@@ -130,5 +130,33 @@ NPCTemplates.prototype={
 	modalValid: function(){
 		$("#NPCModal").modal("hide");
 		this.dispatcher.dispatchEvent("changeNPC", parseInt($("#npc_c_list").val()));
+	},
+	getNPC: function(id){
+		return this.npc_list[id];
+	}
+};
+
+
+function NPC(id, x, y){
+	this.id_tmp = id;
+	this.x = x;
+	this.y = y;
+}
+
+NPC.prototype={
+	getX: function(){
+		return this.x;
+	},
+	getY: function(){
+		return this.y;
+	},
+	getCharset: function(){
+		return charset_manager.getCharset(npc_manager.getNPC(this.id_tmp).character);
+	},
+	getNPC: function(){
+		return npc_manager.getNPC(this.id_tmp);
+	},
+	getSave: function(){
+		return {id: this.id_tmp, x:this.x, y:this.y};
 	}
 };

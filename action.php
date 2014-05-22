@@ -46,7 +46,7 @@ if(!empty($_POST['action'])){
 }
 elseif(!empty($_POST['data'])){
 	$data = json_decode($_POST['data'],true);
-	$map = new Map($data['width'], $data['height'], $data['name'], $data['cells']);
+	$map = new Map($data['width'], $data['height'], $data['name'], $data['cells'], $data['npc']);
 	Map::saveMap($map, 'maps/'.prepareName($data['name']).'.map');
 	echo json_encode(array('success'=>true));
 }

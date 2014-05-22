@@ -36,7 +36,11 @@ window.onload = function(){
 	  if(anchor == 'npc') mode = TAB_NPC;
 	  else if(anchor == 'dialog') mode = TAB_DIALOG;
 	  else if(anchor == 'reply') mode = TAB_REPLY;
-	  else mode = TAB_MAP;
+	  else{
+		mode = TAB_MAP;
+		editor.getMapUI().draw();
+		updateNPCList();
+		}
 	})
 	$(document).mouseup(function(e){ editor.mouseUp(e); });
 	$(document).keydown(function(e){
@@ -59,11 +63,28 @@ window.onload = function(){
 	});
 	editor.getMapUI().addEventListener(false, 'layoutchange', layoutChange);
 	editor.getMapUI().addEventListener(false, 'hiddenlayoutchange', hiddenLayoutChange);
+	editor.getMapUI().addEventListener(false, 'npcAdded', updateNPCList);
 	editor.addEventListener(false, 'toolchange', toolChange);
-	
-	
+	editor.addEventListener(false, 'mapchange', updateNPCList);
+	$("#map_add_npc").click(addNPC);
+	$("#map_npc_list").change(mapNPCSelected);
+	$("#map_remove_npc").click(removeNPC);
+	npc_manager.addChangeListener(false, npcSelected);
 }
-
+function npcSelected(e){
+	editor.getMapUI().setSelectedNPC(e.datas);
+}
+function removeNPC(){
+	var id = editor.getMap().getSelectedNPC();
+	if(id == -1) return;
+	editor.getMap().selectNPC(-1);
+	editor.getMap().removeNPC(id);
+	updateNPCList();
+	editor.getMapUI().draw();
+}
+function addNPC(){
+	npc_manager.openDialog();
+}
 function toogleHiddenLayout(id){
 	editor.getMapUI().toogleHiddenLayout(id)
 }
@@ -72,6 +93,19 @@ function setCalque(id){
 }
 function setTool(id){
 	editor.setTool(id);
+}
+function updateNPCList(){
+	var html = "";
+	var npc = editor.getMap().getNPC();
+	for(var i in npc){
+		html += "<option value='"+i+"'>"+npc[i].getNPC().name+"</option>";
+	}
+	$("#map_npc_list").html(html);
+}
+function mapNPCSelected(){
+	var id = parseInt($(this).val());
+	editor.getMap().selectNPC(id);
+	editor.getMapUI().draw();
 }
 
 //Gestion event

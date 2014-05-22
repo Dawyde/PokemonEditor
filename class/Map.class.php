@@ -3,13 +3,15 @@ class Map{
 	private $width;
 	private $height;
 	private $name;
+	private $npc;
 	
 	private $cells;
 	
-	public function __construct($w, $h, $name, $cells){
+	public function __construct($w, $h, $name, $cells, $npc){
 		$this->cells = $cells;
 		$this->width = $w;
 		$this->height = $h;
+		$this->npc = $npc;
 		$this->name = $name;
 	}
 	
@@ -19,7 +21,8 @@ class Map{
 			'w'=>$this->width,
 			'h'=>$this->height,
 			'name'=>$this->name,
-			'cells'=>$this->cells
+			'cells'=>$this->cells,
+			'npc'=>$this->npc
 		);
 	}
 	
@@ -32,7 +35,7 @@ class Map{
 		if(!file_exists($filename)) return false;
 		$data = json_decode(file_get_contents($filename), true);
 		
-		return new Map(intval($data['w']), intval($data['h']), $data['name'], $data['cells']);
+		return new Map(intval($data['w']), intval($data['h']), $data['name'], $data['cells'], isset($data['npc'])?$data['npc']:array());
 	}
 
 }
