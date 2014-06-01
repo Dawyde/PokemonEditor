@@ -16,6 +16,7 @@
 	<script type="text/javascript" src="editor/NPCTemplates.js"></script>
 	<script type="text/javascript" src="editor/Reply.js"></script>
 	<script type="text/javascript" src="editor/Dialog.js"></script>
+	<script type="text/javascript" src="editor/InteractiveCell.js"></script>
 	<script type="text/javascript" src="editor/main.js"></script>
 	<style>
 
@@ -93,16 +94,18 @@
 			<canvas width="275" height="600" id="tiles"></canvas>
 		</div>
 		<div id="map_npc">
-			<span class="title">PNJ de la Map</span>
 			<div class="row">
 				<div class="span3">
-					<select id="map_npc_list" multiple="true">
+					<span class="titlespan">PNJ de la Map</span>
+					<select id="map_npc_list" multiple="true" class='npclist'>
 					
 					</select>
 					<button class="btn btn-info" style="width:100%;" id="map_add_npc">Ajouter PNJ</button>
-				</div>
-				<div class="offset1 span3">
 					<button class="btn btn-danger" style="width:100%;" id="map_remove_npc">Supprimer</button>
+				</div>
+				<div class="offset1 span10">
+					<span class="titlespan">Interactive Cells</span>
+					<div id="ics"></div>
 				</div>
 			</div>
 		</div>
@@ -119,6 +122,7 @@
 			<canvas id="npc_charset" width="100" height="150"></canvas>
 			<label for="npc_id">Id : </label><input type="number" id="npc_id" class="input-medium"><br/>
 			<label for="npc_name">Nom du PNJ : </label><input type="text" id="npc_name" class="input-xlarge"><br/>
+			<label for="npc_pokemons">PokemonBag : </label><input type="text" id="npc_pokemonbag" class="input-xlarge"><br/>
 			<label for="npc_dialog">Dialog : </label>
 			<div class="input-append" style="margin:0px;padding:0px;">
 				<span class="input-medium uneditable-input" id="npc_dialog_view">Aucun</span>
@@ -186,9 +190,6 @@
 			</div>
 			<div>
 				<select id="reply_effect_types">
-					<option value="1">Ajouter/Retirer de l'Argent</option>
-					<option value="2">Ajouter/Retirer un Objet</option>
-					<option value="3">Nouveau Dialog</option>
 				</select>
 				<input type="button" id="reply_effect_add" class="btn" value="Ajouter"/>
 			</div>
@@ -242,7 +243,7 @@
 	<div id="ReplyModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="ReplyModalLabel" aria-hidden="true">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-			<h3 id="NPCModalLabel">Liste de Réponses</h3>
+			<h3 id="ReplyModalLabel">Liste de Réponses</h3>
 		</div>
 		<div class="modal-body">
 			Choisissez une réponse :
@@ -251,6 +252,20 @@
 		<div class="modal-footer">
 			<button class="btn" data-dismiss="modal" aria-hidden="true">Annuler</button>
 			<button class="btn btn-info" id="reply_c_valider">Valider</button>
+		</div>
+	</div>
+	<div id="NewMapModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="NewMapModalLabel" aria-hidden="true">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3 id="NewMapModalLabel">Nouvelle Carte</h3>
+		</div>
+		<div class="modal-body">
+			Largeur : <input type='number' value='50' id='new_map_w'/><br/>
+			Longueur : <input type='number' value='50' id='new_map_h'/><br/>
+		</div>
+		<div class="modal-footer">
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Annuler</button>
+			<button class="btn btn-info" onClick='newMapConfirm();'>Valider</button>
 		</div>
 	</div>
 </body>

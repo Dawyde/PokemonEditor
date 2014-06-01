@@ -71,47 +71,14 @@ body .modal{
 	margin-right:300px;
 	border:1px solid black;
 }
-#reply_effects>div{
-	width:400px;
-	min-height:50px;
-	border-left:4px solid #BBB;
-	padding-left:10px;
-	margin-bottom:5px;
-}
-#reply_effects .title{
-	font-weight: bold;
-	color:#777;
-}
-
-#reply_effects .delete:hover{
-	color:#A00;
-}
-#reply_effects p{
-	margin-left:20px;
-}
-#reply_effects input{
-	width:100px;
-	height:20px;
-	padding:0px;
-	margin-top:5px;
-}
 #dialog_replies div{
 	width:400px;
 	border-left:4px solid #BBB;
 	padding-left:5px;
 	margin-bottom:5px;
 }
-#dialog_replies .delete, #reply_effects .delete{
-	float:right;
-	font-weight: bold;
-	color:#777;
-	cursor:default;
-}
-#dialog_replies .delete:hover, #reply_effects .delete:hover{
-	color:#A00;
-}
 
-input[type=text]{
+input[type=text], input[type=number]{
 	height:30px;
 	margin-bottom:0px;
 }
@@ -121,12 +88,51 @@ input[type=text]{
 	border:1px solid black;
 	min-height:240px;
 }
-#map_npc .title{
+#map_npc .titlespan{
 	display:inline-block;
 	width:100%;
+	margin-left:0px;
+	padding-left:0px;
 	background-color:black;
 	color:white;
 }
-#map_npc select{
+#map_npc select.npclist{
 	height:200px;
+}
+
+div.effects label{
+	display: inline-block;
+}
+#reply_effects>div, div.effects>div{
+	width:400px;
+	min-height:50px;
+	border-left:4px solid #BBB;
+	padding-left:10px;
+	margin-bottom:5px;
+}
+#reply_effects .title, div.effects .title{
+	font-weight: bold;
+	color:#777;
+}
+
+#reply_effects .delete:hover, div.effects .delete:hover{
+	color:#A00;
+}
+#reply_effects p, div.effects p{
+	margin-left:20px;
+}
+#reply_effects input, div.effects input{
+	width:100px;
+	height:20px;
+	padding:0px;
+	margin-top:5px;
+}
+#dialog_replies .delete, #reply_effects .delete, div.effects .delete{
+	float:right;
+	font-weight: bold;
+	color:#777;
+	cursor:default;
+}
+#dialog_replies .delete:hover, #reply_effects .delete:hover{
+	color:#A00;
 }

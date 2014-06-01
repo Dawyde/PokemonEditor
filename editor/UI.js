@@ -24,7 +24,7 @@ function MapUI(editor, canvas_id){
 MapUI.prototype = {
 	init: function(){
 		this.element.d = this.dispatcher;
-		this.element.onmousedown = function(e){ this.d.dispatchEvent('mousedown', {x: e.offsetX, y : e.offsetY, b: e.button}); return false;};
+		this.element.onmousedown = function(e){ this.d.dispatchEvent('mousedown', {x: e.offsetX, y : e.offsetY, b: e.button, c: e.ctrlKey}); return false;};
 		this.element.oncontextmenu = function(e){ return false;};
 		this.element.onmousemove = function(e){ this.d.dispatchEvent('mousemove', {x: e.offsetX, y : e.offsetY} );};
 		this.mapchange();
@@ -68,6 +68,7 @@ MapUI.prototype = {
 		this.drawNPC(this.ctx);
 		this.drawCalque(this.ctx, 3);
 		this.drawTypeCalque(this.ctx);
+		this.drawICCalque(this.ctx);
 		
 		
 		var i, j;
@@ -82,6 +83,12 @@ MapUI.prototype = {
 			this.ctx.lineTo(map.getWidth()*T_WIDTH, i*T_HEIGHT);
 		}
 		this.ctx.stroke();
+		
+		var selected = this.editor.getICManager().getSelected();
+		if(selected != false){
+			this.ctx.fillStyle="rgba(255,125,0,0.6)";
+			this.ctx.fillRect(selected.x*T_WIDTH, selected.y*T_HEIGHT, T_WIDTH, T_HEIGHT);
+		}
 		
 		
 	},
@@ -131,6 +138,20 @@ MapUI.prototype = {
 		}
 		ctx.globalAlpha = 1;
 	},
+	drawICCalque: function(ctx){
+		var x, y;
+		var map = this.editor.getMap();
+		for(y=0;y<map.getHeight();y++){
+			for(x=0;x<map.getWidth();x++){
+				var c = map.getCell(x,y);
+				if(c.ic){
+					ctx.fillStyle="rgba(255,255,0,0.5)";
+					ctx.fillRect(x*T_WIDTH, y*T_HEIGHT, T_WIDTH, T_HEIGHT);
+				}
+			}
+		}
+		ctx.globalAlpha = 1;
+	},
 	drawCell: function(ctx, x, y, cell){
 		if(!cell) return;
 		var tileset = this.editor.getTilesetManager().getTileset(cell.tileset);
@@ -141,6 +162,14 @@ MapUI.prototype = {
 		this.dispatcher.addEventListener(callbackObj, event_name, callback);
 	},
 	mousedown: function(e){
+		if(e.datas.c && e.datas.b == 2){
+			//Sélections de l'IC
+			var x = Math.floor(e.datas.x/T_WIDTH);
+			var y = Math.floor(e.datas.y/T_HEIGHT);
+			this.editor.getICManager().setSelectedCell(x,y);
+			this.draw();
+			return;
+		}
 		if(this.selected_npc != -1){
 			var x = Math.floor(e.datas.x/T_WIDTH);
 			var y = Math.floor(e.datas.y/T_HEIGHT);

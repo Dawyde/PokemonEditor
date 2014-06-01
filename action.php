@@ -42,6 +42,15 @@ if(!empty($_POST['action'])){
 		$id = intval($_POST['id']);
 		echo json_encode($r->updateDialog($_POST));
 	}
+	elseif($action == 'map_list'){
+		$maps = glob('./maps/*');
+		$retour = array();
+		foreach($maps as $map){
+			$sid = substr($map, 7, -4);
+			$retour[] = $sid;
+		}
+		echo json_encode($retour);
+	}
 
 }
 elseif(!empty($_POST['data'])){

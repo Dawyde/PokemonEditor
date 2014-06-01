@@ -4,6 +4,7 @@ function EditorManager(sets){
 	this.map = new Map(29,40);
 	
 	this.tilesets = new TilesetManager(T_WIDTH, T_HEIGHT);
+	this.interactivecellmanager = new InteractiveCellManager(this);
 	//On ajoute les tilesets
 	var i;
 	for(i=0;i<sets.length;i++) this.tilesets.addTileset(sets[i]);
@@ -50,6 +51,9 @@ EditorManager.prototype={
 	getTool: function(){
 		return this.current_tool;
 	},
+	getICManager: function(){
+		return this.interactivecellmanager;
+	},
 	addEventListener: function(callbackObj, event_name, callback){
 		this.dispatcher.addEventListener(callbackObj, event_name, callback);
 	},
@@ -90,6 +94,7 @@ EditorManager.prototype={
 			$("#map_name").focus();
 			return;
 		}
+		this.interactivecellmanager.save();
 		var save = this.map.getSave();
 		save.name = name;
 		$.ajax({
@@ -102,10 +107,15 @@ EditorManager.prototype={
 			}
 		});
 	},
+	newmap: function(w, h){
+		this.map = new Map(w, h);
+		this.dispatcher.dispatchEvent('mapchange', {});
+		this.map_ui.draw();
+		this.history = new History(this.map);
+	},
 	mapload: function(data){
 		data = data.datas;
 		this.map = new Map(data.w, data.h);
-		console.log(data);
 		var x, y;
 		var id = this.tilesets.getCurrentTileset().getId();
 		for(y=0;y<data.h;y++){
@@ -116,6 +126,10 @@ EditorManager.prototype={
 					cell.setC(2, {tileset:id, id:data.cells[y][x].l2});
 					cell.setC(3, {tileset:id, id:data.cells[y][x].l3});
 					cell.setC(4, data.cells[y][x].t);
+					if(data.cells[y][x].ic){
+						cell.ic = new InteractiveCell(x,y);
+						cell.ic.setDatas(data.cells[y][x].ic);
+					}
 				}
 			}
 		}

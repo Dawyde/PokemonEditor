@@ -36,6 +36,7 @@ class NPCTemplates{
 		$this->datas[$id] = array(
 			'id' => $id,
 			'name' => trim($datas['name']),
+			'pokemons' => trim($datas['pokemons']),
 			'character' => intval($datas['character']),
 			'dialog' => intval($datas['dialog'])
 		);

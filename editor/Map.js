@@ -94,6 +94,8 @@ Cell.prototype={
 		return true;
 	},
 	getSave: function(){
-		return {l1: (this.c1)?this.c1.id:-1, l2: (this.c2)?this.c2.id:-1, l3: (this.c3)?this.c3.id:-1, t:this.t};
+		var rt = {l1: (this.c1)?this.c1.id:-1, l2: (this.c2)?this.c2.id:-1, l3: (this.c3)?this.c3.id:-1, t:this.t};
+		if(this.ic) rt.ic = this.ic.save();
+		return rt;
 	}
 }

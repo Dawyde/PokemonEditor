@@ -11,6 +11,8 @@ function ReplyManager(){
 	
 	this.reply_list = [];
 	
+	this.maplist = [];
+	
 	this.current_ge = -1;
 	
 	this.dispatcher.addEventListener(this, 'addEffectPressed', this.addEffect);
@@ -20,19 +22,30 @@ function ReplyManager(){
 	this.dispatcher.addEventListener(this, 'replySaveSuccess', this.saveSuccess);
 	this.dispatcher.addEventListener(this, 'replyChanged', this.replyChanged);
 	this.dispatcher.addEventListener(this, 'replyValiderPressed', this.validerPressed);
+	this.dispatcher.addEventListener(this, 'mapListReceived', this.mapListReceived);
+	
+	$("#reply_effect_types").html(getEffectList());
 	
 	this.updateGameEffects();
 	this.updateReplyList();
+	this.loadMaps();
 }
 
 ReplyManager.prototype={
 	updateGameEffects: function(no_update){
 		var html = "";
 		for(var i in this.GE){
-			if(!no_update) this.GE[i].update(i);
-			html += this.GE[i].getHtml(i);
+			if(!no_update) this.GE[i].update('reply', i);
+			html += this.GE[i].getHtml(this, 'reply', i);
 		}
 		$("#reply_effects").html(html);
+	},
+	getMapList: function(){
+		return this.maplist;
+	},
+	mapListReceived: function(datas){
+		this.maplist = datas.datas;
+		this.updateGameEffects();
 	},
 	replyChanged: function(datas){
 		var id = datas.datas;
@@ -63,6 +76,19 @@ ReplyManager.prototype={
 			},
 			success: function(e){
 				reply_manager.dispatcher.dispatchEvent('replySaveSuccess', e);
+			}
+		})
+	},
+	loadMaps:function(){
+		$.ajax({
+			url:"action.php",
+			type:'post',
+			dataType:'json',
+			data:{
+				action:'map_list',
+			},
+			success: function(e){
+				reply_manager.dispatcher.dispatchEvent('mapListReceived', e);
 			}
 		})
 	},
@@ -97,19 +123,19 @@ ReplyManager.prototype={
 	removeEffect: function(id){
 		//Suppression d'un effet
 		for(var i in this.GE){
-			this.GE[i].update(i);
+			this.GE[i].update('reply', i);
 		}
 		this.GE.splice(id,1);
 		var html = "";
 		for(var i in this.GE){
-			html += this.GE[i].getHtml(i);
+			html += this.GE[i].getHtml(this, 'reply', i);
 		}
 		$("#reply_effects").html(html);
 	},
 	saveGE: function(){
 		var save = new Array();
 		for(var i in this.GE){
-			this.GE[i].update(i);
+			this.GE[i].update('reply', i);
 			if(!this.GE[i].isValid()) continue;
 			save[save.length] = this.GE[i].getData();
 		}
@@ -143,6 +169,10 @@ ReplyManager.prototype={
 		if(id == GE_MONNEY) nge = new GameEffect(id, [0]);
 		else if(id == GE_GIVE_ITEM) nge = new GameEffect(id, [0,0]);
 		else if(id == GE_DIALOG) nge = new GameEffect(id, [-1]);
+		else if(id == GE_TELEPORT){
+		
+			nge = new GameEffect(id, ["",0,0]);
+		}
 		else return;
 		this.GE[this.GE.length] = nge;
 		this.updateGameEffects();
@@ -159,10 +189,19 @@ ReplyManager.prototype={
 	}
 };
 
+function getEffectList(){
+	var html = "";
+	html += '<option value="1">Ajouter/Retirer de l\'Argent</option>';
+	html += '<option value="2">Ajouter/Retirer un Objet</option>';
+	html += '<option value="3">Nouveau Dialog</option>';
+	html += '<option value="5">Téléportation</option>';
+	return html;
+}
 
 var GE_MONNEY = 1;
 var GE_GIVE_ITEM = 2;
 var GE_DIALOG = 3;
+var GE_TELEPORT = 5;
 
 function GameEffect(type, args){
 	this.type = type;
@@ -170,9 +209,9 @@ function GameEffect(type, args){
 }
 
 GameEffect.prototype={
-	getHtml: function(id){
-		var hid = 'reply_gr_'+id;
-		var html = "<div id='"+hid+"'><span class='delete' onClick='reply_manager.removeEffect("+id+")'>x</span><span class='title'>";
+	getHtml: function(reply_manager, pre, id){
+		var hid = pre+'_gr_'+id;
+		var html = "<div id='"+hid+"'><span class='delete' onClick='"+(pre=='reply'?'reply_manager':'editor.getICManager()')+".removeEffect("+id+")'>x</span><span class='title'>";
 		if(this.type == GE_MONNEY){
 			html += "Ajouter/Retirer Argent</span><p><label>Somme : </label><input type='number' id='"+hid+"_v1' value='"+this.args[0]+"'/></p>";
 		}
@@ -183,7 +222,17 @@ GameEffect.prototype={
 			html += "Nouveau dialog</span><p><div class='input-append' style='margin:0px;padding:0px;'><span class='input-xlarge uneditable-input' id='"+hid+"_view'>";
 			if(this.args[0] == -1) html += "Aucun";
 			else html += this.args[0]+" - "+dialog_manager.getDialogSummary(this.args[0]);
-			html+= "</span><button class='btn' onClick='reply_manager.selectDialog("+id+");'>Parcourir</button></div></p>";
+			html+= "</span><button class='btn' onClick='"+(pre=='reply'?'reply_manager':'editor.getICManager()')+".selectDialog("+id+");'>Parcourir</button></div></p>";
+		}
+		else if(this.type == GE_TELEPORT){
+			var options = "<select id='"+hid+"_v1'>";
+			var list = reply_manager.getMapList();
+			for(var i=0;i<list.length;i++){
+				if(list[i] == this.args[0]) options += "<option value='"+list[i]+"' selected='selected'>"+list[i]+"</option>";
+				else options += "<option value='"+list[i]+"'>"+list[i]+"</option>";
+			}
+			options += "</select>"
+			html += "Teleportation</span><p><label>Map : </label>"+options+"<br/><label>X : </label><input type='number' id='"+hid+"_v2' value='"+this.args[1]+"'/><br/><label>Y : </label><input type='number' id='"+hid+"_v3' value='"+this.args[2]+"'/></p>";
 		}
 		
 		html += "</div>";
@@ -196,10 +245,10 @@ GameEffect.prototype={
 		this.args[id] = value;
 	},
 	isValid: function(){
-		return this.type == GE_MONNEY || this.type == GE_GIVE_ITEM || this.type == GE_DIALOG;
+		return this.type == GE_MONNEY || this.type == GE_GIVE_ITEM || this.type == GE_DIALOG || this.type == GE_TELEPORT;
 	},
-	update: function(id){
-		var hid = 'reply_gr_'+id;
+	update: function(pre, id){
+		var hid = pre+'_gr_'+id;
 		//Récupération des valeurs
 		if(this.type == GE_MONNEY){
 			if(document.getElementById(hid+"_v1")) this.args = [parseInt($("#"+hid+"_v1").val())];
@@ -208,6 +257,9 @@ GameEffect.prototype={
 			if(document.getElementById(hid+"_v2")) this.args = [parseInt($("#"+hid+"_v1").val()), parseInt($("#"+hid+"_v2").val())];
 		}
 		else if(this.type == GE_DIALOG){
+		}
+		else if(this.type == GE_TELEPORT){
+			if(document.getElementById(hid+"_v3")) this.args = [$("#"+hid+"_v1").val(), parseInt($("#"+hid+"_v2").val()), parseInt($("#"+hid+"_v3").val())];
 		}
 	},
 	getData: function(){

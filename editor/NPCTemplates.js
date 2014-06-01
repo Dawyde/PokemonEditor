@@ -52,6 +52,7 @@ NPCTemplates.prototype={
 			//On change de PNJ
 			$("#npc_id").val(this.npc_list[e.datas].id);
 			$("#npc_name").val(this.npc_list[e.datas].name);
+			$("#npc_pokemonbag").val(this.npc_list[e.datas].pokemons?this.npc_list[e.datas].pokemons:"");
 			this.selectDialog(this.npc_list[e.datas].dialog);
 			this.selectCharacter(this.npc_list[e.datas].character);
 		}
@@ -61,6 +62,7 @@ NPCTemplates.prototype={
 		var id = $("#npc_id").val();
 		if(id == "") id = -1;
 		var name = $("#npc_name").val();
+		var bag = $("#npc_pokemonbag").val();
 		if(this.selected_id == -1){
 			alert("Vous devez choisir une apparence valide");
 			return;
@@ -73,6 +75,7 @@ NPCTemplates.prototype={
 				action:'npc_tmp_save',
 				id: id,
 				name: name,
+				pokemons: bag,
 				character: this.selected_id,
 				dialog: this.selected_dialog
 			},
@@ -99,6 +102,7 @@ NPCTemplates.prototype={
 		//Nouveau PNJ
 		$("#npc_id").val(-1);
 		$("#npc_name").val("");
+		$("#npc_pokemonbag").val("");
 		this.selectDialog(-1);
 		this.selectCharacter(-1);
 	},

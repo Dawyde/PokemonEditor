@@ -71,6 +71,15 @@ window.onload = function(){
 	$("#map_remove_npc").click(removeNPC);
 	npc_manager.addChangeListener(false, npcSelected);
 }
+function new_map(){
+	$("#NewMapModal").modal('show');
+}
+function newMapConfirm(){
+	$("#NewMapModal").modal('hide');
+	var w = parseInt($("#new_map_w").val());
+	var h = parseInt($("#new_map_h").val());
+	editor.newmap(w, h);
+}
 function npcSelected(e){
 	editor.getMapUI().setSelectedNPC(e.datas);
 }
